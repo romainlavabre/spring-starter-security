@@ -33,6 +33,8 @@ CLASSES=(
     "$1/config/Role.java"
     "$1/config/SecurityConfig.java"
     "$1/controller/SecurityController.java"
+    "$1/PasswordEncoder.java"
+    "$1/PasswordEncoderImpl.java"
 )
 
 for CLASS in "${CLASSES[@]}"; do
