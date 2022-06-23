@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -53,18 +54,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure( final HttpSecurity http ) throws Exception {
 
-        http.csrf().disable();
-
         http
+                .cors().and()
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS )
                 .and()
                 .anonymous()
                 .and()
                 .authorizeRequests()
+                .antMatchers( HttpMethod.OPTIONS, "/**" ).permitAll()
                 .antMatchers( SecurityConfig.WHITE_ENDPOINT ).permitAll()
                 .antMatchers( "/**" ).access( "hasRole('" + Role.ADMIN + "')" )
-                .anyRequest()
-                .authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint( new HttpStatusEntryPoint( HttpStatus.UNAUTHORIZED ) );
