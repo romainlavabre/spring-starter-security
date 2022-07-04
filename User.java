@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,6 +48,11 @@ public class User {
             @Group
     } )
     private String resetPasswordToken;
+
+    @Json( groups = {
+            @Group
+    } )
+    private ZonedDateTime resetPasswordTokenUpdatedAt;
 
 
     public User() {
@@ -123,6 +130,13 @@ public class User {
     public User setResetPasswordToken( String resetPasswordToken ) {
         this.resetPasswordToken = resetPasswordToken;
 
+        resetPasswordTokenUpdatedAt = ZonedDateTime.now( ZoneId.of( "UTC" ) );
+        
         return this;
+    }
+
+
+    public ZonedDateTime getResetPasswordTokenUpdatedAt() {
+        return resetPasswordTokenUpdatedAt;
     }
 }
