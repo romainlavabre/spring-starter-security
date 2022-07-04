@@ -68,6 +68,8 @@ Maven dependency
 
 ### Versions
 
+##### 2.0.0
+ADD User.resetPasswordToken field
 
 ##### 1.0.2
 FIX User.username non unique

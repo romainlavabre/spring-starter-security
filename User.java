@@ -39,7 +39,13 @@ public class User {
     } )
     @ElementCollection
     private final Set< String > roles;
-    private       boolean       enable;
+
+    private boolean enable;
+
+    @Json( groups = {
+            @Group
+    } )
+    private String resetPasswordToken;
 
 
     public User() {
@@ -106,5 +112,17 @@ public class User {
 
     public boolean isEnabled() {
         return this.enable;
+    }
+
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+
+    public User setResetPasswordToken( String resetPasswordToken ) {
+        this.resetPasswordToken = resetPasswordToken;
+
+        return this;
     }
 }
