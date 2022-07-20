@@ -1,12 +1,11 @@
 package com.replace.replace.api.security;
 
-import com.replace.replace.api.request.Request;
+import com.fairfair.ag.api.request.Request;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,18 +16,26 @@ public class AuthenticationHandlerImpl implements AuthenticationHandler {
 
     private final AuthenticationManager authenticationManager;
 
+
     public AuthenticationHandlerImpl( final AuthenticationManager authenticationManager ) {
         this.authenticationManager = authenticationManager;
     }
 
-    @Override
-    public Authentication getAuthentication( final Jws< Claims > token ) {
+
+    public Authentication getAuthentication( User user ) {
         return new UsernamePasswordAuthenticationToken(
-                token.getBody().get( "username" ),
-                token,
-                AuthorityUtils.commaSeparatedStringToAuthorityList( token.getBody().get( "roles", String.class ) )
+                user.getUsername(),
+                user,
+                user.getAuthorities()
         );
     }
+
+
+    @Override
+    public Authentication getAuthentication( Jws< Claims > token ) {
+        return null;
+    }
+
 
     @Override
     public Authentication authenticate( final Request request ) {

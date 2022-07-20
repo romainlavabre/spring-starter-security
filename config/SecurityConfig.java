@@ -1,8 +1,6 @@
 package com.replace.replace.api.security.config;
 
 import com.replace.replace.api.security.AuthenticationFilter;
-import com.replace.replace.api.security.JwtTokenHandler;
-import com.replace.replace.api.security.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -36,18 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/v2/api-docs",
             "/v3/api-docs"
     };
-    protected            JwtTokenHandler    jwtTokenHandler;
     protected            UserDetailsService userDetailsService;
-    protected            Security           security;
 
 
     public SecurityConfig(
-            final JwtTokenHandler jwtTokenHandler,
-            @Qualifier( "userDetailsService" ) final UserDetailsService userDetailsService,
-            final Security security ) {
-        this.jwtTokenHandler    = jwtTokenHandler;
+            @Qualifier( "userDetailsService" ) final UserDetailsService userDetailsService ) {
         this.userDetailsService = userDetailsService;
-        this.security           = security;
     }
 
 
@@ -90,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthenticationFilter authenticationTokenFilterBean() {
-        return new AuthenticationFilter( this.jwtTokenHandler, this.security );
+        return new AuthenticationFilter();
     }
 
 

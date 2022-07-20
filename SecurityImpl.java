@@ -14,25 +14,30 @@ public class SecurityImpl implements Security {
 
     protected User user;
 
+
     @Override
     public long getId() {
         return this.user.getId();
     }
+
 
     @Override
     public String getUsername() {
         return this.user.getUsername();
     }
 
+
     @Override
     public Set< String > getRoles() {
         return this.user.getRoles();
     }
 
+
     @Override
     public boolean hasRole( final String role ) {
         return this.user.getRoles().contains( role );
     }
+
 
     @Override
     public boolean hasUserConnected() {
@@ -47,6 +52,11 @@ public class SecurityImpl implements Security {
         user.setUsername( username );
         roles.forEach( user::addRole );
 
+        this.user = user;
+    }
+
+
+    public void hydrate( User user ) {
         this.user = user;
     }
 }
