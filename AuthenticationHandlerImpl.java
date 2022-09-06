@@ -1,6 +1,6 @@
 package com.replace.replace.api.security;
 
-import com.fairfair.ag.api.request.Request;
+import com.replace.replace.api.request.Request;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.security.authentication.AuthenticationManager;

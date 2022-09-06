@@ -1,7 +1,6 @@
 package com.replace.replace.api.security;
 
-import com.fairfair.ag.api.environment.Environment;
-import com.fairfair.ag.util.Cast;
+import com.replace.replace.api.environment.Environment;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.security.core.Authentication;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service
-public class UserAccessResolverImpl implements com.fairfair.ag.api.security.UserAccessResolver {
+public class UserAccessResolverImpl implements com.replace.replace.api.security.UserAccessResolver {
 
     protected final Environment           environment;
     protected final JwtTokenHandler       jwtTokenHandler;
@@ -37,9 +36,9 @@ public class UserAccessResolverImpl implements com.fairfair.ag.api.security.User
         SecurityContextHolder.getContext().setAuthentication( authentication );
 
         User user = new User();
-        user.setId( Cast.getLong( claims.getBody().getSubject() ) );
+        user.setId( Long.parseLong( claims.getBody().getSubject() ) );
         user.setUsername( claims.getBody().get( "username" ).toString() );
-        for ( String role : claims.getBody().get( "roles", String.class ).toString().split( "," ) ) {
+        for ( String role : claims.getBody().get( "roles", String.class ).split( "," ) ) {
             user.addRole( role );
         }
 
