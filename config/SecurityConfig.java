@@ -1,22 +1,22 @@
 package com.replace.replace.api.security.config;
 
 import com.replace.replace.api.security.AuthenticationFilter;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity( securedEnabled = true, prePostEnabled = true )
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private static final String[]           WHITE_ENDPOINT = {
             "/auth",
@@ -43,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Override
-    protected void configure( final HttpSecurity http ) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain( final HttpSecurity http ) throws Exception {
 
         http
                 .cors().and()
@@ -53,10 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .anonymous()
                 .and()
-                .authorizeRequests()
-                .antMatchers( HttpMethod.OPTIONS, "/**" ).permitAll()
-                .antMatchers( SecurityConfig.WHITE_ENDPOINT ).permitAll()
-                .antMatchers( "/**" ).access( "hasRole('" + Role.ADMIN + "')" )
+                .authorizeHttpRequests()
+                .dispatcherTypeMatchers( DispatcherType.ERROR ).permitAll()
+                .requestMatchers( HttpMethod.OPTIONS, "/**" ).permitAll()
+                .requestMatchers( SecurityConfig.WHITE_ENDPOINT ).permitAll()
+                .requestMatchers( "/**" ).hasRole( new SecurityRole( Role.ADMIN ).toString() )
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
@@ -64,19 +65,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterBefore( this.authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class );
+
+        return http.build();
     }
 
 
     @Autowired
     public void configureGlobal( final AuthenticationManagerBuilder authenticationManagerBuilder ) throws Exception {
         authenticationManagerBuilder.userDetailsService( this.userDetailsService );
-    }
-
-
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
     }
 
 
@@ -89,5 +85,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    private class SecurityRole {
+        private final String ROLE;
+
+
+        public SecurityRole( String role ) {
+            ROLE = role;
+        }
+
+
+        @Override
+        public String toString() {
+            return ROLE.replace( "ROLE_", "" );
+        }
     }
 }
